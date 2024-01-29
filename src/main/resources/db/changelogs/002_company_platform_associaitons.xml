@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="1" author="ludogorie-soft">
+        <validCheckSum>your_checksum_here</validCheckSum>
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="platform_association"/>
+            </not>
+        </preConditions>
+        <createTable tableName="platform_association">
+            <column name="id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="platform_url" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="company_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="2" author="ludogorie-soft">
+        <addForeignKeyConstraint
+                baseTableName="platform_association"
+                baseColumnNames="company_id"
+                referencedTableName="companies"
+                referencedColumnNames="id"
+                onDelete="CASCADE"
+                onUpdate="CASCADE" constraintName="fk_platform_association_company"/>
+    </changeSet>
+
+</databaseChangeLog>
