@@ -24,6 +24,13 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:/db/liquibase_changelog.xml
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: '${GOOGLE_CLIENT_ID}'
+            client-secret: '${GOOGLE_CLIENT_SECRET}'
 
 springdoc:
   api-docs:
