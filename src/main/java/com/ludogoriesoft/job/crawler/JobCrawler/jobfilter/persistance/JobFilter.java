@@ -1,5 +1,6 @@
 package com.ludogoriesoft.job.crawler.JobCrawler.jobfilter.persistance;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.ludogoriesoft.job.crawler.JobCrawler.jobpositions.persistance.JobPosition;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -9,7 +10,8 @@ import lombok.Data;
 @Data
 public class JobFilter {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @JsonIgnore
     private Long id;
     @ManyToOne
     @JoinColumn(name = "job_position_id")

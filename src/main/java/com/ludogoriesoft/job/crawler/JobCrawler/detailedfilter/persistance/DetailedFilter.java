@@ -9,7 +9,7 @@ import lombok.Data;
 @Data
 public class DetailedFilter {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "job_position_id")

@@ -21,7 +21,8 @@ public class JobAd {
     private String jobAdUrl;
     private String source;
     private String region;
-    private LocalDateTime postDate;
+    private String postDate;
+    private String lastUpdated;
     @Enumerated(EnumType.STRING)
     private JobAdStatus status;
     @CreationTimestamp

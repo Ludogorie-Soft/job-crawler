@@ -11,12 +11,12 @@ import java.util.List;
 @Data
 public class Company {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String name;
     private String websiteUrl;
-    @OneToMany
+    @OneToMany(mappedBy = "company", cascade = CascadeType.REMOVE)
     private List<CompanyPlatformAssociation> platformAssociations;
     @Enumerated(EnumType.STRING)
-    private CompanyStatus status;
+    private CompanyStatus companyStatus;
 }
