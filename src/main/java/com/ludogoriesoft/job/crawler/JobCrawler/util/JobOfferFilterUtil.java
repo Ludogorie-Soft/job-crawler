@@ -6,36 +6,23 @@ import java.util.regex.Pattern;
 
 public final class JobOfferFilterUtil {
 
-    private JobOfferFilterUtil(){}
+    private JobOfferFilterUtil() {
+    }
 
     private final static Set<String> EXCLUDED_WORDS = Set.of("angular", "react", "vue", "frontend needed");
     private final static Pattern C2C_PATTERN = Pattern.compile("\\bcorp\\s+to\\s+corp\\b");
-    private final static Pattern EXCLUDED_WORDS_PATTERN =Pattern.compile("\b(?:" + String.join("|", EXCLUDED_WORDS) + ")\b");
+    private final static Pattern EXCLUDED_WORDS_PATTERN = Pattern.compile("\b(?:" + String.join("|", EXCLUDED_WORDS) + ")\b");
 
 
-
-
-    public static boolean isSuitableJobOffer(String overview, String description){
+    public static boolean isSuitableJobOffer(String overview, String description) {
         Matcher c2cMatcher = C2C_PATTERN.matcher(overview.toLowerCase());
         Matcher excludedWordsOverviewMatcher = EXCLUDED_WORDS_PATTERN.matcher(overview.toLowerCase());
         Matcher excludedWordsDescriptionMatcher = EXCLUDED_WORDS_PATTERN.matcher(description.toLowerCase());
         boolean containsExcludedWords = excludedWordsOverviewMatcher.find() && excludedWordsDescriptionMatcher.find();
-        if( (c2cMatcher.find() && !containsExcludedWords) ){
+        if ((c2cMatcher.find() && !containsExcludedWords)) {
             return true;
         }
         return false;
-        }
-
-//    public static boolean testIt(){
-//        Matcher c2cMatcher = C2C_PATTERN.matcher("Accepts corp to corp applications");
-//        Matcher excludedWordsOverviewMatcher = EXCLUDED_WORDS_PATTERN.matcher("angular");
-//        Matcher excludedWordsDescriptionMatcher = EXCLUDED_WORDS_PATTERN.matcher("hehehe");
-//        boolean c2c = c2cMatcher.find();
-//        boolean containsExcludedWords = !excludedWordsOverviewMatcher.find() && !excludedWordsDescriptionMatcher.find();
-//
-//
-//        return c2c && !containsExcludedWords;
-//
-//    }
+    }
 
 }

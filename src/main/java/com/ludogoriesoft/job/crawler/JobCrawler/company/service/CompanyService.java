@@ -1,9 +1,10 @@
 package com.ludogoriesoft.job.crawler.JobCrawler.company.service;
 
+import com.ludogoriesoft.job.crawler.JobCrawler.company.model.CompanyDto;
+import com.ludogoriesoft.job.crawler.JobCrawler.company.model.CompanyMapper;
 import com.ludogoriesoft.job.crawler.JobCrawler.company.persistence.Company;
 import com.ludogoriesoft.job.crawler.JobCrawler.company.persistence.CompanyRepository;
 import com.ludogoriesoft.job.crawler.JobCrawler.company.persistence.CompanyStatus;
-import lombok.Builder;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -16,10 +17,11 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class CompanyService {
     private final CompanyRepository repository;
+    private final CompanyMapper mapper;
 
-    public void save(String name, String websiteUrl, CompanyStatus satus){
+    public void save(String name, String websiteUrl){
         if(getCompanyByName(name).isEmpty()){
-            repository.save(createCompany(name, websiteUrl, satus));
+            repository.save(createCompany(name, websiteUrl));
             log.info("Company with name {} was created in the db", name);
         }
     }
@@ -29,27 +31,30 @@ public class CompanyService {
         log.info("Company with id= {} was deleted from the db",id);
     }
 
-    public void updateCompanyStatus(String companyName, CompanyStatus status){
-        Optional<Company> company = getCompanyByName(companyName);
+    public void updateCompanyStatusById(Long id, CompanyStatus status){
+        Optional<Company> company = repository.findById(id);
         if(company.isPresent()){
             company.get().setCompanyStatus(status);
             repository.save(company.get());
-            log.info("The status of company {} was updated to {}",companyName, status);
+            log.info("The status of company {} was updated to {}",company.get().getName(), status);
         }
     }
 
-    public List<Company> list(){
-        return repository.findAll();
+    public List<CompanyDto> list(){
+        return repository.findAll()
+                .stream()
+                .map(mapper::entityToDto)
+                .toList();
     }
     public Optional<Company> getCompanyByName(String name){
         return repository.findByName(name);
     }
 
-    private Company createCompany(String name,String websiteUrl,CompanyStatus companyStatus){
+    private Company createCompany(String name,String websiteUrl){
+
         Company company = new Company();
         company.setName(name);
         company.setWebsiteUrl(websiteUrl);
-        company.setCompanyStatus(companyStatus);
         return  company;
     }
 }

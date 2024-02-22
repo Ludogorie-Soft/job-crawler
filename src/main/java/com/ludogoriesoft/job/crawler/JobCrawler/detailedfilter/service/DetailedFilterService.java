@@ -20,7 +20,7 @@ public class DetailedFilterService {
         for (String detailedFilter : detailedFilters) {
             if (getDetailedFilterByFilterUrlAndJobPositionId(detailedFilter, jobPosition.getId()).isEmpty()) {
                 repository.save(createDetailedFilter(detailedFilter, jobPosition));
-                log.info("Detailed filter was created in the db, related to job position -> id:{} \nname:{}", jobPosition.getId(), jobPosition.getName());
+                log.info("Detailed filter= {} was created in the db, related to job position -> \nid:{} \nname:{}",detailedFilter, jobPosition.getId(), jobPosition.getName());
             }
         }
     }

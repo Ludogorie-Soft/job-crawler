@@ -23,11 +23,15 @@ public class JobPositionService {
             JobPosition jobPosition = new JobPosition();
             jobPosition.setName(dto.getName());
             repository.save(jobPosition);
+            log.info("Job position {} was created in the db", dto.getName());
             if(dto.getFilters() != null && !dto.getFilters().isEmpty()){
                 detailedFilterService.save(dto.getFilters(), jobPosition);
             }
-            log.info("Job position {} was created in the db", dto.getName());
         }
+    }
+
+    public List<JobPosition> list(){
+        return repository.findAll();
     }
 
     public void delete(Long id){

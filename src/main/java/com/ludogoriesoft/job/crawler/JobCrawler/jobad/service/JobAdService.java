@@ -23,6 +23,10 @@ public class JobAdService {
         }
     }
 
+    public void deleteById(Long id){
+        repository.deleteById(id);
+    }
+
     public Optional<JobAd> getJobAdByAdUrl(String jobAdUrl){
         return repository.findByJobAdUrl(jobAdUrl);
     }
