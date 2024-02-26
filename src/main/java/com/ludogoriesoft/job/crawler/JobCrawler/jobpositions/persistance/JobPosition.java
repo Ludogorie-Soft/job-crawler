@@ -5,6 +5,7 @@ import com.ludogoriesoft.job.crawler.JobCrawler.jobfilter.persistance.JobFilter;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.util.List;
 
@@ -21,6 +22,8 @@ public class JobPosition {
     private List<DetailedFilter> detailedFilters;
     @OneToMany(mappedBy = "jobPositionId", cascade = CascadeType.REMOVE)
     private List<JobFilter> jobFilters;
+    @Enumerated(EnumType.STRING)
+    private JobPositionStatus status;
 
     @Override
     public String toString() {
@@ -28,7 +31,7 @@ public class JobPosition {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", detailedFilters=" + detailedFilters +
-                ", jobFilters=" + jobFilters +
+                ", status=" + status +
                 '}';
     }
 }

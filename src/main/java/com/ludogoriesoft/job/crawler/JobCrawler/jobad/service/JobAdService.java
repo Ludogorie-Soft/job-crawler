@@ -8,6 +8,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -15,6 +16,10 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class JobAdService {
     private final JobAdRepository repository;
+
+    public List<JobAd> list(){
+        return repository.findAll();
+    }
 
     public void save(JobFilter jobFilter, String jobAdUrl, String source, String region, String postDate, String lastUpdated){
         if(getJobAdByAdUrl(jobAdUrl).isEmpty()){
@@ -37,7 +42,6 @@ public class JobAdService {
         jobAd.setSource(source);
         jobAd.setRegion(region);
         jobAd.setPostDate(postDate);
-        jobAd.setLastUpdated(lastUpdated);
         jobAd.setStatus(JobAdStatus.ACTIVE);
         return jobAd;
     }

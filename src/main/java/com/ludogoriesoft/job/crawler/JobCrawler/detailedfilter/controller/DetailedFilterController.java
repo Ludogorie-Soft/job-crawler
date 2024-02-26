@@ -12,10 +12,4 @@ import org.springframework.web.bind.annotation.*;
 public class DetailedFilterController {
     private final DetailedFilterService service;
 
-    @PostMapping("/{id}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteByID(@PathVariable Long id){
-        service.delete(id);
-    }
-
 }

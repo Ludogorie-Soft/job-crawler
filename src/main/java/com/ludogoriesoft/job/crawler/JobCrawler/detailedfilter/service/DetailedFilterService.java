@@ -16,16 +16,26 @@ import java.util.Optional;
 public class DetailedFilterService {
     private final DetailedFilterRepository repository;
 
-    public void save(List<String> detailedFilters, JobPosition jobPosition) {
-        for (String detailedFilter : detailedFilters) {
+    public void save(List<String> whitelistFilters,
+                     List<String> blacklistFilters,
+                     JobPosition jobPosition) {
+        // save whitelist filters
+        for (String detailedFilter : whitelistFilters) {
             if (getDetailedFilterByFilterUrlAndJobPositionId(detailedFilter, jobPosition.getId()).isEmpty()) {
-                repository.save(createDetailedFilter(detailedFilter, jobPosition));
-                log.info("Detailed filter= {} was created in the db, related to job position -> \nid:{} \nname:{}",detailedFilter, jobPosition.getId(), jobPosition.getName());
+                repository.save(createDetailedFilter(detailedFilter, jobPosition, true));
+                log.info("Detailed filter= {} was created in the db, related to job position -> \nid:{} \nname:{}", detailedFilter, jobPosition.getId(), jobPosition.getName());
+            }
+        }
+        // save blacklist filters
+        for (String detailedFilter : blacklistFilters) {
+            if (getDetailedFilterByFilterUrlAndJobPositionId(detailedFilter, jobPosition.getId()).isEmpty()) {
+                repository.save(createDetailedFilter(detailedFilter, jobPosition, false));
+                log.info("Detailed filter= {} was created in the db, related to job position -> \nid:{} \nname:{}", detailedFilter, jobPosition.getId(), jobPosition.getName());
             }
         }
     }
 
-    public void delete(Long id){
+    public void delete(Long id) {
         repository.deleteById(id);
     }
 
@@ -33,10 +43,20 @@ public class DetailedFilterService {
         return repository.findByFilterUrlAndJobPositionId(filter, jobPositionId);
     }
 
-    private DetailedFilter createDetailedFilter(String filter, JobPosition jobPosition) {
+    private DetailedFilter createDetailedFilter(String filter, JobPosition jobPosition, boolean isWhitelist) {
         DetailedFilter detailedFilter = new DetailedFilter();
         detailedFilter.setFilter(filter);
         detailedFilter.setJobPositionId(jobPosition);
+        detailedFilter.setIsWhitelist(isWhitelist);
         return detailedFilter;
+    }
+
+    public void update(List<String> whitelistFilters, List<String> blacklistFilters, JobPosition jobPosition) {
+        // find all detailed filters for given job position
+        List<DetailedFilter> detailedFilters = repository.findAllByJobPositionId(jobPosition.getId());
+        //delete them
+        detailedFilters.forEach(df -> delete(df.getId()));
+        // create new one
+        save(whitelistFilters, blacklistFilters, jobPosition);
     }
 }

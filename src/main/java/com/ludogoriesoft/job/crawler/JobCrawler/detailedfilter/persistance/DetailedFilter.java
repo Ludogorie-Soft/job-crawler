@@ -19,12 +19,14 @@ public class DetailedFilter {
     @JsonIgnore
     private JobPosition jobPositionId;
     private String filter;
+    private Boolean isWhitelist;
 
     @Override
     public String toString() {
         return "DetailedFilter{" +
                 "id=" + id +
                 ", filter='" + filter + '\'' +
+                ", isWhitelist=" + isWhitelist +
                 '}';
     }
 }

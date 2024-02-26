@@ -6,7 +6,6 @@ import org.springframework.context.annotation.Configuration;
 
 @Configuration
 public class JsoupConfig {
-
     @Bean
     public Parser jsoupParser() {
         return Parser.xmlParser();

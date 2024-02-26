@@ -16,26 +16,57 @@ import java.util.Optional;
 public class JobFilterService {
     private final JobFilterRepository repository;
 
-    public void save(JobPosition jobPosition, String jobSite, String filterUrl){
-        if(getJobFilter(jobPosition, jobSite, filterUrl).isEmpty()){
-            repository.save(createJobFilter(jobPosition,jobSite,filterUrl));
+    public void save(JobPosition jobPosition, String jobSite, String filterUrl) {
+        if (getJobFilter(jobPosition, jobSite, filterUrl).isEmpty()) {
+            repository.save(createJobFilter(jobPosition, jobSite, filterUrl));
             log.info("Job filter was created in the db with url -> " + filterUrl);
         }
     }
 
-    public List<JobFilter> list(){
+    public List<JobFilter> list() {
         return repository.findAll();
     }
 
-    public Optional<JobFilter> getJobFilter(JobPosition jobPosition, String jobSite, String filterUrl){
+    public Optional<JobFilter> getJobFilter(JobPosition jobPosition, String jobSite, String filterUrl) {
         return repository.findJobFilterByJobPositionIdAndJobSiteAndFilterUrl(jobPosition.getId(), jobSite, filterUrl);
     }
 
-    private JobFilter createJobFilter(JobPosition jobPosition, String jobSite, String filterUrl){
+    public void update(List<JobFilter> jobFilterList, JobPosition jobPosition) {
+        for (JobFilter jf : jobFilterList) {
+            if (jf.getId() != null) {
+                repository.findById(jf.getId()).ifPresent(existingFilter -> {
+                    String jobSite = jf.getJobSite();
+                    String filterUrl = jf.getFilterUrl();
+                    if (isNotBlank(jobSite) && isNotBlank(filterUrl)) {
+                        existingFilter.setJobSite(jobSite);
+                        existingFilter.setFilterUrl(filterUrl);
+                        repository.save(existingFilter);
+                        log.info("Job filter for position {} was updated from {}:{} to {}:{}",jobPosition.getName(), existingFilter.getJobSite(), existingFilter.getFilterUrl(), jf.getJobSite(), jf.getFilterUrl());
+                    } else {
+                        repository.deleteById(jf.getId());
+                        log.info("Job filter {}:{} for position {} was deleted",jf.getJobSite(), jf.getFilterUrl(), jobPosition.getName());
+                    }
+                });
+            } else {
+                String jobSite = jf.getJobSite();
+                String filterUrl = jf.getFilterUrl();
+                if (isNotBlank(jobSite) && isNotBlank(filterUrl)) {
+                    save(jobPosition, jobSite, filterUrl);
+                }
+            }
+        }
+    }
+
+    private JobFilter createJobFilter(JobPosition jobPosition, String jobSite, String filterUrl) {
         JobFilter jobFilter = new JobFilter();
         jobFilter.setJobPositionId(jobPosition);
         jobFilter.setJobSite(jobSite);
         jobFilter.setFilterUrl(filterUrl);
         return jobFilter;
     }
+
+    private boolean isNotBlank(String value) {
+        return value != null && !value.isEmpty();
+    }
+
 }

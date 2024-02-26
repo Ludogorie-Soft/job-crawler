@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
+          integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <title>Create job position</title>
+</head>
+<body>
+<h1>Create Company</h1>
+<form th:action="@{/company/save}" method="POST" th:object="${company}">
+    <div class="form-group">
+        <label for="nameInput">Name</label>
+        <input th:field="*{name}" type="text" class="form-control" id="nameInput">
+    </div>
+    <div class="form-group">
+        <label for="websiteInput">website url</label>
+        <input th:field="*{websiteUrl}" type="text" class="form-control" id="websiteInput">
+    </div>
+    <div class="col-auto my-1">
+        <label th:field="*{companyStatus}" class="mr-sm-2" for="inlineFormCustomSelect">Status</label>
+        <select class="custom-select mr-sm-2" id="inlineFormCustomSelect" th:field="*{companyStatus}"
+                required>
+            <option selected disabled th:value="null">Choose...</option>
+            <option th:value="B2B">B2B</option>
+            <option th:value="NO_B2B">NoB2B</option>
+            <option th:value="PROSPECT">PROSPECT</option>
+        </select>
+    </div>
+    <div class="form-group">
+        <label for="companyPlatform">Company platform association. Example: https://dev.bg/company/company-name/, https://job.bg/company/company-name/</label>
+        <textarea th:field="*{platformAssociations}" class="form-control" id="companyPlatform" rows="3"></textarea>
+    </div>
+    <button class="btn btn-dark" type="submit">SAVE</button>
+</form>
+</body>
+</html>

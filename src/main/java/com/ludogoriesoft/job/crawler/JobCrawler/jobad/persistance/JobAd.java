@@ -29,7 +29,6 @@ public class JobAd {
     private String source;
     private String region;
     private String postDate;
-    private String lastUpdated;
     @Enumerated(EnumType.STRING)
     private JobAdStatus status;
     @CreationTimestamp
@@ -47,7 +46,6 @@ public class JobAd {
                 ", source='" + source + '\'' +
                 ", region='" + region + '\'' +
                 ", postDate='" + postDate + '\'' +
-                ", lastUpdated='" + lastUpdated + '\'' +
                 ", status=" + status +
                 ", createdAt=" + createdAt +
                 ", updatedAt=" + updatedAt +
