@@ -125,6 +125,16 @@
 <!--			<artifactId>spring-security-oauth2-jose</artifactId>-->
 <!--			<version>6.2.1</version>-->
 <!--		</dependency>-->
+		<dependency>
+			<groupId>edu.uci.ics</groupId>
+			<artifactId>crawler4j</artifactId>
+			<version>4.4.0</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sleepycat</groupId>
+			<artifactId>je</artifactId>
+			<version>4.0.92</version> <!-- Use the latest version -->
+		</dependency>
 	</dependencies>
 
 	<build>

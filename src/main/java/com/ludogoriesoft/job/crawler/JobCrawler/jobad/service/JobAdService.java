@@ -21,9 +21,9 @@ public class JobAdService {
         return repository.findAll();
     }
 
-    public void save(JobFilter jobFilter, String jobAdUrl, String source, String region, String postDate, String lastUpdated){
+    public void save(JobAdStatus status, JobFilter jobFilter, String jobAdUrl, String source, String region, String postDate){
         if(getJobAdByAdUrl(jobAdUrl).isEmpty()){
-            repository.save(createJobAd(jobFilter, jobAdUrl, source, region, postDate, lastUpdated));
+            repository.save(createJobAd(status,jobFilter, jobAdUrl, source, region, postDate));
             log.info("Job ad was created in the db with url -> " + jobAdUrl);
         }
     }
@@ -35,14 +35,14 @@ public class JobAdService {
     public Optional<JobAd> getJobAdByAdUrl(String jobAdUrl){
         return repository.findByJobAdUrl(jobAdUrl);
     }
-    private JobAd createJobAd(JobFilter jobFilter, String jobAdUrl, String source, String region, String postDate,String lastUpdated){
+    private JobAd createJobAd(JobAdStatus status, JobFilter jobFilter, String jobAdUrl, String source, String region, String postDate){
         JobAd jobAd = new JobAd();
         jobAd.setJobFilterId(jobFilter);
         jobAd.setJobAdUrl(jobAdUrl);
         jobAd.setSource(source);
         jobAd.setRegion(region);
         jobAd.setPostDate(postDate);
-        jobAd.setStatus(JobAdStatus.ACTIVE);
+        jobAd.setStatus(status);
         return jobAd;
     }
 }

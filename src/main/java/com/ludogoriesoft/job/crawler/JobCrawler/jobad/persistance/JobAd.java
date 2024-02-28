@@ -19,7 +19,7 @@ import static com.ludogoriesoft.job.crawler.JobCrawler.constants.DataJsonFormat.
 @Setter
 public class JobAd {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     @ManyToOne
     @JoinColumn(name = "job_filter_id")

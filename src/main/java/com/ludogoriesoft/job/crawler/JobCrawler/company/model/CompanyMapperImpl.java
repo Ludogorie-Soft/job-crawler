@@ -4,7 +4,10 @@ import com.ludogoriesoft.job.crawler.JobCrawler.company.persistence.Company;
 import com.ludogoriesoft.job.crawler.JobCrawler.companyplatformassociation.persistence.CompanyPlatformAssociation;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Component
 public class CompanyMapperImpl implements CompanyMapper {
@@ -15,11 +18,11 @@ public class CompanyMapperImpl implements CompanyMapper {
         companyDto.setCompanyStatus(entity.getCompanyStatus());
         companyDto.setName(entity.getName());
         companyDto.setWebsiteUrl(entity.getWebsiteUrl());
-
         List<String> platformAssociations = entity.getPlatformAssociations()
                 .stream()
                 .map(CompanyPlatformAssociation::getPlatformUrl)
-                .toList();
+                .collect(Collectors.toCollection(ArrayList::new));
+
 
         companyDto.setPlatformAssociations(platformAssociations);
         return companyDto;

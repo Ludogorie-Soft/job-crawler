@@ -15,8 +15,9 @@ public class Company {
     private Long id;
     private String name;
     private String websiteUrl;
-    @OneToMany(mappedBy = "company", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "company", cascade = CascadeType.REMOVE, fetch = FetchType.EAGER)
     private List<CompanyPlatformAssociation> platformAssociations;
     @Enumerated(EnumType.STRING)
     private CompanyStatus companyStatus;
+
 }

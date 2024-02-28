@@ -4,8 +4,6 @@ import com.ludogoriesoft.job.crawler.JobCrawler.company.model.CompanyDto;
 import com.ludogoriesoft.job.crawler.JobCrawler.company.model.CompanyMapper;
 import com.ludogoriesoft.job.crawler.JobCrawler.company.persistence.Company;
 import com.ludogoriesoft.job.crawler.JobCrawler.company.persistence.CompanyRepository;
-import com.ludogoriesoft.job.crawler.JobCrawler.company.persistence.CompanyStatus;
-import com.ludogoriesoft.job.crawler.JobCrawler.companyplatformassociation.persistence.CompanyPlatformAssociation;
 import com.ludogoriesoft.job.crawler.JobCrawler.companyplatformassociation.service.CompanyPlatformAssociationService;
 import com.ludogoriesoft.job.crawler.JobCrawler.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -68,10 +66,14 @@ public class CompanyService {
                 .toList();
     }
 
-    public CompanyDto getCompanyById(Long id){
+
+    public Optional<CompanyDto> getCompanyById(Long id) {
         return repository.findById(id)
-                .map(mapper::entityToDto)
-                .orElseThrow(() -> new NotFoundException("No such company."));
+                .map(mapper::entityToDto);
     }
 
+    public Optional<CompanyDto> getCompanyByName(String companyName) {
+        return repository.findByName(companyName)
+                .map(mapper::entityToDto);
+    }
 }

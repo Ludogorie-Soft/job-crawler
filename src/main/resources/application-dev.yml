@@ -1,5 +1,5 @@
 spring:
-  datasource:
+ datasource:
     url: 'jdbc:postgresql://localhost:5432/jobcrawler'
     username: 'admin'
     password: 'password'
