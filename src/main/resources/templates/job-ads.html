@@ -4,11 +4,18 @@
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
           integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+    <link rel="stylesheet" href="//cdn.datatables.net/2.0.1/css/dataTables.dataTables.min.css">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    <script src="//cdn.datatables.net/2.0.1/js/dataTables.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     <title>Job Ads</title>
 </head>
 <body>
+<!--HEADER-->
+<th:block th:include="~{fragments/header}"></th:block>
+<!--END HEADER-->
 <h1>Job Ad List</h1>
 <input class="form-control" id="myInput" type="text" placeholder="Search..">
 <table class="table" id="table">
@@ -29,6 +36,7 @@
     <tr th:each="ad : ${ads}">
         <td th:text="${ad.id}"></td>
         <td th:text="${ad.jobFilterId}"></td>
+        <td><a target="_blank" th:href="${ad.jobAdUrl}" th:text="${ad.jobAdUrl}"></a></td>
         <td th:text="${ad.source}"></td>
         <td th:text="${ad.region}"></td>
         <td th:text="${ad.postDate}"></td>
@@ -46,6 +54,16 @@
             $("#table tr").filter(function () {
                 $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
             });
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $('#table').DataTable({
+            "dom": "tp",
+            "ordering": true,
+            "pagingType": "simple",
+            "lengthMenu": [ 20 ]
         });
     });
 </script>

@@ -8,6 +8,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Optional;
+
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/company")
@@ -24,9 +26,8 @@ public class CompanyController {
     // update
     @GetMapping("/{id}")
     public String getCompanyById(@PathVariable Long id, Model model) {
-//        todo: handle NotFoundException
-        CompanyDto companyDto = companyService.getCompanyById(id);
-        model.addAttribute("companyDto", companyDto);
+        Optional<CompanyDto> companyDto = companyService.getCompanyById(id);
+        model.addAttribute("companyDto", companyDto.get());
         return "company";
     }
 
