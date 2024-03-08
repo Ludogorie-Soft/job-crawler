@@ -30,6 +30,7 @@
         <th>Status</th>
         <th>Created at</th>
         <th>Updated at</th>
+        <th>Change Status</th>
     </tr>
     </thead>
     <tbody>
@@ -41,8 +42,17 @@
         <td th:text="${ad.region}"></td>
         <td th:text="${ad.postDate}"></td>
         <td th:text="${ad.status}"></td>
-        <td th:text="${ad.createdAt}"></td>
-        <td th:text="${ad.updatedAt}"></td>
+        <td th:text="${#temporals.format(ad.createdAt, 'yyyy-MM-dd')}"></td>
+        <td th:text="${#temporals.format(ad.updatedAt, 'yyyy-MM-dd')}"></td>
+        <td>
+            <form th:action="@{/job-ad/update/{id}(id=${ad.id})}" method="POST">
+                <select name="newStatus" onchange="this.form.submit()">
+                    <option selected disabled>Choose...</option>
+                    <option th:each="stat : ${statuses}" th:text="${stat}" th:value="${stat}"></option>
+                </select>
+            </form>
+        </td>
+
     </tr>
     </tbody>
 </table>
