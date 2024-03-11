@@ -24,9 +24,7 @@ public class JobAdController {
 
     @PostMapping("/update/{id}")
     public String updateStatus(@PathVariable Long id, @RequestParam("newStatus") String newStatus) {
-        System.out.println(id);
-        System.out.println(newStatus);
-         service.updateStatus(id, newStatus);
+        service.updateStatus(id, newStatus);
         return "redirect:/job-ad/all";
     }
 
