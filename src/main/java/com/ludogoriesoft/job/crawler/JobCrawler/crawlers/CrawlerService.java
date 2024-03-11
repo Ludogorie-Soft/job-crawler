@@ -14,7 +14,7 @@ import org.springframework.stereotype.Service;
 public class CrawlerService {
     private final DevBGCrawlerService devBgCrawler4JService;
 
-    @Scheduled(cron = "* 22 * * * *") // every 1 minute
+    @Scheduled(cron = "* 55 * * * *") // every 1 minute
     public void crawl() {
         crawlDevBg();
     }

@@ -35,6 +35,15 @@ public class JobAdService {
     public Optional<JobAd> getJobAdByAdUrl(String jobAdUrl){
         return repository.findByJobAdUrl(jobAdUrl);
     }
+
+    public void updateStatus(Long id, String status){
+        Optional<JobAd> ad = repository.findById(id);
+        if(ad.isPresent()){
+            log.info("Change job ad with id-{} status to {}", ad.get().getId(), status);
+            ad.get().setStatus(JobAdStatus.valueOf(status));
+            repository.save(ad.get());
+        }
+    }
     private JobAd createJobAd(JobAdStatus status, JobFilter jobFilter, String jobAdUrl, String source, String region, String postDate){
         JobAd jobAd = new JobAd();
         jobAd.setJobFilterId(jobFilter);
