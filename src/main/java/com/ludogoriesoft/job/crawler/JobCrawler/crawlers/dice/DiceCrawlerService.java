@@ -1,4 +1,4 @@
-package com.ludogoriesoft.job.crawler.JobCrawler.crawlers.devBG;
+package com.ludogoriesoft.job.crawler.JobCrawler.crawlers.dice;
 
 import com.ludogoriesoft.job.crawler.JobCrawler.company.service.CompanyService;
 import com.ludogoriesoft.job.crawler.JobCrawler.companyplatformassociation.service.CompanyPlatformAssociationService;
@@ -23,27 +23,27 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class DevBGCrawlerService {
-    private final DevBGExtractor devBGExtractor;
+public class DiceCrawlerService {
+    private final DiceExtractor diceExtractor;
     private final JobFilterRepository jobFilterRepository;
     private final DetailedFilterRepository detailedFilterRepository;
     private final CompanyService companyService;
     private final CompanyPlatformAssociationService companyPlatformAssociationService;
     private final JobAdService jobAdService;
-    private static final String JOB_SITE = "dev.bg";
+    private static final String JOB_SITE = "dice.com";
 
     public void crawl() throws Exception {
         List<JobFilter> jobFilterList = jobFilterRepository.findAllByJobSite(JOB_SITE);
         if (!jobFilterList.isEmpty()) {
-            log.info("Start crawling dev.bg");
+            log.info("Start crawling dice.com");
             for (JobFilter jobFilter : jobFilterList) {
                 String baseUrl = jobFilter.getFilterUrl();
-                log.info("BASE URL"+baseUrl);
+                log.info("BASE URL " + baseUrl);
                 JobPosition jobPosition = jobFilter.getJobPositionId();
                 List<DetailedFilter> detailedFilterList = detailedFilterRepository.findAllByJobPositionId(jobPosition.getId());
                 processCrawl(jobFilter, baseUrl, jobPosition, detailedFilterList);
             }
-            log.info("End crawling dev.bg");
+            log.info("End crawling dice.com");
         }
     }
 
@@ -55,15 +55,15 @@ public class DevBGCrawlerService {
         config.setCrawlStorageFolder(crawlStorage.getAbsolutePath());
 
         int numCrawlers = 1;
-        int maxDepthOfCrawling = 1; // Set the maximum depth of crawling
+        int maxDepthOfCrawling = 2; // Set the maximum depth of crawling
         config.setMaxDepthOfCrawling(maxDepthOfCrawling);
 
         CrawlController controller = getCrawlController(baseUrl, config);
 
 
         controller.start(
-                new DevBGFactory(jobFilter,
-                        devBGExtractor,
+                new DiceFactory(jobFilter,
+                        diceExtractor,
                         companyService,
                         jobAdService,
                         companyPlatformAssociationService,
@@ -80,9 +80,17 @@ public class DevBGCrawlerService {
         int totalPages = 10; // Set the total number of pages you want to crawl
 
         for (int i = 1; i <= totalPages; i++) {
-            String seedUrl = baseUrl + i;
+            String seedUrl = appendPageNumber(baseUrl, i);
             controller.addSeed(seedUrl);
+            log.info(seedUrl);
         }
+
         return controller;
+    }
+
+    // Helper method to append page number to base URL
+    private static String appendPageNumber(String baseUrl, int pageNumber) {
+        // Replace the existing page parameter value with the new page number
+        return baseUrl + "?page=" + pageNumber;
     }
 }
