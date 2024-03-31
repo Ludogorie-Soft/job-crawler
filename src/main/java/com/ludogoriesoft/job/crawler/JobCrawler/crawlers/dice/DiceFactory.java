@@ -2,8 +2,6 @@ package com.ludogoriesoft.job.crawler.JobCrawler.crawlers.dice;
 
 import com.ludogoriesoft.job.crawler.JobCrawler.company.service.CompanyService;
 import com.ludogoriesoft.job.crawler.JobCrawler.companyplatformassociation.service.CompanyPlatformAssociationService;
-import com.ludogoriesoft.job.crawler.JobCrawler.crawlers.dice.DiceCrawler;
-import com.ludogoriesoft.job.crawler.JobCrawler.crawlers.dice.DiceExtractor;
 import com.ludogoriesoft.job.crawler.JobCrawler.detailedfilter.persistance.DetailedFilter;
 import com.ludogoriesoft.job.crawler.JobCrawler.jobad.service.JobAdService;
 import com.ludogoriesoft.job.crawler.JobCrawler.jobfilter.persistance.JobFilter;

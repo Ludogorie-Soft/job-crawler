@@ -26,51 +26,6 @@ public class DiceExtractor implements Extractor {
         return null;
     }
 
-    public boolean isRemote(String html) {
-        Document document = Jsoup.parse(html);
-        Elements locationDetailsElement = document.select("div[data-cy='locationDetails'] span");
-
-        for (Element element : locationDetailsElement) {
-            boolean isRemote = element.text().toLowerCase().contains("remote");
-
-            if (isRemote) {
-                System.out.println("REMOTE");
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public boolean hasContract(String html) {
-        Document document = Jsoup.parse(html);
-        Elements employmentDetailsElements = document.select("div[data-cy='employmentDetails'] span");
-
-        for (Element element : employmentDetailsElements) {
-            boolean containsContract = element.text().toLowerCase().contains("contract");
-
-            if (containsContract) {
-                System.out.println("CONTRACT");
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-    public String extractCompanyUrl(String html) {
-        Document document = Jsoup.parse(html);
-
-        // Select anchor elements with class "company-logo-link"
-        Element companyNameElement = document.selectFirst("#jobdetails a[data-cy='companyNameLink']");
-
-        if (companyNameElement != null) {
-            return companyNameElement.attr("href");
-        }
-
-        return null;
-    }
-
     @Override
     public List<String> extractTechStack(String html) {
         Document doc = Jsoup.parse(html);
@@ -92,6 +47,49 @@ public class DiceExtractor implements Extractor {
 
         if (timeElement != null) {
             return timeElement.text();
+        }
+
+        return null;
+    }
+
+    public boolean isRemote(String html) {
+        Document document = Jsoup.parse(html);
+        Elements locationDetailsElement = document.select("div[data-cy='locationDetails'] span");
+
+        for (Element element : locationDetailsElement) {
+            boolean isRemote = element.text().toLowerCase().contains("remote");
+
+            if (isRemote) {
+                System.out.println("REMOTE");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public boolean hasContract(String html) {
+        Document document = Jsoup.parse(html);
+        Elements employmentDetailsElements = document.select("div[data-cy='employmentDetails'] span");
+
+        for (Element element : employmentDetailsElements) {
+            boolean containsContract = element.text().toLowerCase().contains("accepts corp to corp applications");
+
+            if (containsContract) {
+                System.out.println("CONTRACT");
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public String extractCompanyUrl(String html) {
+        Document document = Jsoup.parse(html);
+        Element companyNameElement = document.selectFirst("#jobdetails a[data-cy='companyNameLink']");
+
+        if (companyNameElement != null) {
+            return companyNameElement.attr("href");
         }
 
         return null;

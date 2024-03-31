@@ -16,22 +16,18 @@ public class CrawlerService {
     private final DevBGCrawlerService devBgCrawler4JService;
     private final DiceCrawlerService diceCrawlerService;
 
-//    @Scheduled(cron = "* 42 * * * *")
-//    public void crawlDevBG() {
+    @Scheduled(cron = "* 9 * * * *") //Every hour
+    public void crawl() {
 //        crawlDevBg();
-//    }
-//
+        crawlDice();
+    }
+
     private void crawlDevBg() {
         try {
             devBgCrawler4JService.crawl();
         } catch (Exception e) {
             log.error("Cannot crawl dev.bg");
         }
-    }
-    @Scheduled(cron = "* 4 * * * *")
-    public void crawl() {
-        crawlDevBg();
-        crawlDice();
     }
 
     private void crawlDice() {

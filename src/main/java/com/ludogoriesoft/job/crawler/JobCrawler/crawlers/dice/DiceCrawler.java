@@ -23,20 +23,20 @@ import java.util.regex.Pattern;
 @RequiredArgsConstructor
 public class DiceCrawler extends WebCrawler {
     private final JobFilter jobFilter;
+
     private final JobPosition jobPosition;
     private final List<DetailedFilter> detailedFilterList;
     private final DiceExtractor diceExtractor;
     private final CompanyService companyService;
     private final JobAdService jobAdService;
-    private final CompanyPlatformAssociationService companyPlatformAssociationService;
 
-    private final static String JAVA_JOBS_URL = "https://www.dice.com/jobs/q-Java-jobs";
+    private final CompanyPlatformAssociationService companyPlatformAssociationService;
 
     private final static String JOB_DETAIL_URL = "https://www.dice.com/job-detail/";
 
     private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|gif|jpg"
             + "|png|mp3|mp4|zip|gz))$");
-    private final static String REGION = "BULGARIA";
+    private final static String REGION = "USA";
 
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url) {
@@ -47,9 +47,20 @@ public class DiceCrawler extends WebCrawler {
             return false;
         }
 
-        boolean isJavaJobsURL = urlString.startsWith(JAVA_JOBS_URL);
+        return (!FILTERS.matcher(urlString).matches() && urlString.startsWith(JOB_DETAIL_URL));
+    }
 
-        return (!FILTERS.matcher(urlString).matches() && urlString.startsWith(JOB_DETAIL_URL)) || isJavaJobsURL;
+    @Override
+    public void visit(Page page) {
+        if (page.getParseData() instanceof HtmlParseData htmlParseData && !page.getWebURL().toString().contains("paged=")) {
+            String html = htmlParseData.getHtml();
+            String url = String.valueOf(page.getWebURL());
+
+            if (url.startsWith(JOB_DETAIL_URL) && passFilterRequirements(html)) {
+                processCompany(html);
+                processAd(html, url);
+            }
+        }
     }
 
     private boolean shouldAdProcessed(String urlString) {
@@ -60,22 +71,6 @@ public class DiceCrawler extends WebCrawler {
         return allAds.stream().anyMatch(ja -> urlString.equals(ja.getJobAdUrl()));
     }
 
-    @Override
-    public void visit(Page page) {
-        if (page.getParseData() instanceof HtmlParseData htmlParseData && !page.getWebURL().toString().contains("paged=")) {
-            String html = htmlParseData.getHtml();
-            String url = String.valueOf(page.getWebURL());
-            System.out.println("-------------VISIT-----------");
-            System.out.println(url);
-            if (url.startsWith(JOB_DETAIL_URL) && passFilterRequirements(html)) {
-                processCompany(html);
-//            process add
-                processAd(html, url);
-            }
-
-        }
-    }
-
     private boolean passFilterRequirements(String html) {
         return diceExtractor.hasContract(html) && diceExtractor.isRemote(html);
     }
@@ -84,9 +79,11 @@ public class DiceCrawler extends WebCrawler {
         String companyName = diceExtractor.extractCompanyName(html);
         List<String> techStack = diceExtractor.extractTechStack(html);
         String postDate = diceExtractor.extractDatePosted(html);
+
         if (companyName == null) {
             return;
         }
+
         Optional<CompanyDto> companyDto = companyService.getCompanyByName(companyName);
         CompanyStatus companyStatus = companyDto.get().getCompanyStatus();
 
@@ -125,6 +122,7 @@ public class DiceCrawler extends WebCrawler {
         if (companyName == null) {
             return;
         }
+
         // if company does not exist -> save it
         if (companyService.getCompanyByName(companyName).isEmpty()) {
             // save company
@@ -141,6 +139,5 @@ public class DiceCrawler extends WebCrawler {
                 companyService.updateCompanyById(companyDto.get());
             }
         }
-
     }
 }
