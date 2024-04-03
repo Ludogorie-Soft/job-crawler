@@ -18,7 +18,7 @@ public class CrawlerService {
     private final DiceCrawlerService diceCrawlerService;
     private final FreelancermapCrawlerService freelancermapCrawlerService;
 
-    @Scheduled(cron = "* 1 * * * *") //Every hour
+    @Scheduled(cron = "* 41 * * * *") //Every hour
     public void crawl() {
 //        crawlDevBg();
 //        crawlDice();

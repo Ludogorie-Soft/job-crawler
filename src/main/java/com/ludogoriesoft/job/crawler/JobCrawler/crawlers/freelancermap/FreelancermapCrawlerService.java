@@ -77,13 +77,13 @@ public class FreelancermapCrawlerService {
         RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
         CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
 
-        int totalPages = 1; // Set the total number of pages you want to crawl
+        int totalPages = 10; // Set the total number of pages you want to crawl
 
-//        for (int i = 1; i <= totalPages; i++) {
-//            String seedUrl = appendPageNumber(baseUrl, i);
-            controller.addSeed(baseUrl);
-            log.info(baseUrl);
-       // }
+        for (int i = 1; i <= totalPages; i++) {
+            String seedUrl = appendPageNumber(baseUrl, i);
+            controller.addSeed(seedUrl);
+            log.info(seedUrl);
+        }
 
         return controller;
     }
@@ -91,6 +91,6 @@ public class FreelancermapCrawlerService {
     // Helper method to append page number to base URL
     private static String appendPageNumber(String baseUrl, int pageNumber) {
         // Replace the existing page parameter value with the new page number
-        return baseUrl + "?page=" + pageNumber;
+        return baseUrl + "&pagenr=" + pageNumber;
     }
 }
