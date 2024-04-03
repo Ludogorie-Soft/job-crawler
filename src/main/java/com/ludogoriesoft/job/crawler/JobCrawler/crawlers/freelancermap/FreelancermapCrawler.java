@@ -1,5 +1,6 @@
 package com.ludogoriesoft.job.crawler.JobCrawler.crawlers.freelancermap;
 
+import com.ludogoriesoft.job.crawler.JobCrawler.company.model.CompanyDto;
 import com.ludogoriesoft.job.crawler.JobCrawler.company.service.CompanyService;
 import com.ludogoriesoft.job.crawler.JobCrawler.companyplatformassociation.service.CompanyPlatformAssociationService;
 import com.ludogoriesoft.job.crawler.JobCrawler.detailedfilter.persistance.DetailedFilter;
@@ -15,25 +16,20 @@ import edu.uci.ics.crawler4j.url.WebURL;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
-import java.util.Locale;
 import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
 public class FreelancermapCrawler extends WebCrawler {
+    private final static String JOB_DETAIL_URL = "https://www.freelancermap.com/project/";
+    private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|gif|jpg"
+            + "|png|mp3|mp4|zip|gz))$");
     private final JobFilter jobFilter;
-
     private final JobPosition jobPosition;
     private final List<DetailedFilter> detailedFilterList;
     private final FreelancermapExtractor freelancermapExtractor;
     private final CompanyService companyService;
     private final JobAdService jobAdService;
-
     private final CompanyPlatformAssociationService companyPlatformAssociationService;
-
-    private final static String JOB_DETAIL_URL = "https://www.freelancermap.com/project/";
-
-    private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|gif|jpg"
-            + "|png|mp3|mp4|zip|gz))$");
 
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url) {
@@ -55,7 +51,24 @@ public class FreelancermapCrawler extends WebCrawler {
 
             System.out.println(url);
 
+            processCompany(html);
             processAd(html, url);
+        }
+    }
+
+    private void processCompany(String html) {
+        String companyName = freelancermapExtractor.extractCompanyName(html);
+
+        if (companyName == null) {
+            return;
+        }
+
+        // if company does not exist -> save it
+        if (companyService.getCompanyByName(companyName).isEmpty()) {
+            // save company
+            CompanyDto companyDto = new CompanyDto();
+            companyDto.setName(companyName);
+            companyService.save(companyDto);
         }
     }
 

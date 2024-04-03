@@ -24,13 +24,36 @@ import java.util.List;
 @RequiredArgsConstructor
 @Slf4j
 public class FreelancermapCrawlerService {
+    private static final String JOB_SITE = "freelancermap.com";
     private final FreelancermapExtractor freelancermapExtractor;
     private final JobFilterRepository jobFilterRepository;
     private final DetailedFilterRepository detailedFilterRepository;
     private final CompanyService companyService;
     private final CompanyPlatformAssociationService companyPlatformAssociationService;
     private final JobAdService jobAdService;
-    private static final String JOB_SITE = "freelancermap.com";
+
+    private static CrawlController getCrawlController(String baseUrl, CrawlConfig config) throws Exception {
+        PageFetcher pageFetcher = new PageFetcher(config);
+        RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
+        RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
+        CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
+
+        int totalPages = 10; // Set the total number of pages you want to crawl
+
+        for (int i = 1; i <= totalPages; i++) {
+            String seedUrl = appendPageNumber(baseUrl, i);
+            controller.addSeed(seedUrl);
+            log.info(seedUrl);
+        }
+
+        return controller;
+    }
+
+    // Helper method to append page number to base URL
+    private static String appendPageNumber(String baseUrl, int pageNumber) {
+        // Replace the existing page parameter value with the new page number
+        return baseUrl + "&pagenr=" + pageNumber;
+    }
 
     public void crawl() throws Exception {
         List<JobFilter> jobFilterList = jobFilterRepository.findAllByJobSite(JOB_SITE);
@@ -69,28 +92,5 @@ public class FreelancermapCrawlerService {
                         companyPlatformAssociationService,
                         jobPosition,
                         detailedFilterList), numCrawlers);
-    }
-
-    private static CrawlController getCrawlController(String baseUrl, CrawlConfig config) throws Exception {
-        PageFetcher pageFetcher = new PageFetcher(config);
-        RobotstxtConfig robotstxtConfig = new RobotstxtConfig();
-        RobotstxtServer robotstxtServer = new RobotstxtServer(robotstxtConfig, pageFetcher);
-        CrawlController controller = new CrawlController(config, pageFetcher, robotstxtServer);
-
-        int totalPages = 10; // Set the total number of pages you want to crawl
-
-        for (int i = 1; i <= totalPages; i++) {
-            String seedUrl = appendPageNumber(baseUrl, i);
-            controller.addSeed(seedUrl);
-            log.info(seedUrl);
-        }
-
-        return controller;
-    }
-
-    // Helper method to append page number to base URL
-    private static String appendPageNumber(String baseUrl, int pageNumber) {
-        // Replace the existing page parameter value with the new page number
-        return baseUrl + "&pagenr=" + pageNumber;
     }
 }

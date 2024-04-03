@@ -17,7 +17,8 @@ public class FreelancermapExtractor implements Extractor {
     @Override
     public String extractCompanyName(String html) {
         Document document = Jsoup.parse(html);
-        Element companyNameElement = document.selectFirst("#jobdetails a[data-cy='companyNameLink']");
+        Element companyNameElement = document.selectFirst("dl.m-t-1 dt:contains(From) + dd span[itemprop=name]");
+
 
         if (companyNameElement != null) {
             return companyNameElement.text();
