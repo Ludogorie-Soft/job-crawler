@@ -16,10 +16,10 @@ public class CrawlerService {
     private final DevBGCrawlerService devBgCrawler4JService;
     private final DiceCrawlerService diceCrawlerService;
 
-    @Scheduled(cron = "* 9 * * * *") //Every hour
+    @Scheduled(cron = "0 0 9 ? * MON") // For running a task once a week - every Monday at 9:00 AM
     public void crawl() {
-//        crawlDevBg();
-        crawlDice();
+       crawlDevBg();
+       crawlDice();
     }
 
     private void crawlDevBg() {
