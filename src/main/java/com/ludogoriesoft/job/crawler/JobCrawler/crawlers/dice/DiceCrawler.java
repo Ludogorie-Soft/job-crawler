@@ -1,10 +1,9 @@
-package com.ludogoriesoft.job.crawler.JobCrawler.crawlers.devBG;
+package com.ludogoriesoft.job.crawler.JobCrawler.crawlers.dice;
 
 import com.ludogoriesoft.job.crawler.JobCrawler.company.model.CompanyDto;
 import com.ludogoriesoft.job.crawler.JobCrawler.company.persistence.CompanyStatus;
 import com.ludogoriesoft.job.crawler.JobCrawler.company.service.CompanyService;
 import com.ludogoriesoft.job.crawler.JobCrawler.companyplatformassociation.service.CompanyPlatformAssociationService;
-import com.ludogoriesoft.job.crawler.JobCrawler.crawlers.Extractor;
 import com.ludogoriesoft.job.crawler.JobCrawler.detailedfilter.persistance.DetailedFilter;
 import com.ludogoriesoft.job.crawler.JobCrawler.jobad.persistance.JobAd;
 import com.ludogoriesoft.job.crawler.JobCrawler.jobad.persistance.JobAdStatus;
@@ -22,31 +21,46 @@ import java.util.Optional;
 import java.util.regex.Pattern;
 
 @RequiredArgsConstructor
-public class DevBGCrawler extends WebCrawler {
+public class DiceCrawler extends WebCrawler {
     private final JobFilter jobFilter;
+
     private final JobPosition jobPosition;
     private final List<DetailedFilter> detailedFilterList;
-    private final Extractor devBGExtractor;
+    private final DiceExtractor diceExtractor;
     private final CompanyService companyService;
     private final JobAdService jobAdService;
+
     private final CompanyPlatformAssociationService companyPlatformAssociationService;
 
-    private final static String STARTS_WITH_PATTERN = "https://dev.bg/company/jobads/";
+    private final static String JOB_DETAIL_URL = "https://www.dice.com/job-detail/";
 
     private final static Pattern FILTERS = Pattern.compile(".*(\\.(css|js|gif|jpg"
             + "|png|mp3|mp4|zip|gz))$");
-    private final static String REGION = "BULGARIA";
-
+    private final static String REGION = "USA";
 
     @Override
     public boolean shouldVisit(Page referringPage, WebURL url) {
         String urlString = url.getURL();
+
         // Check if this ad is already processed
         if (shouldAdProcessed(urlString)) {
             return false;
         }
-        // Check for an exact match with the STARTS_WITH_PATTERN and FILTERS
-        return !FILTERS.matcher(urlString).matches() && urlString.startsWith(STARTS_WITH_PATTERN);
+
+        return (!FILTERS.matcher(urlString).matches() && urlString.startsWith(JOB_DETAIL_URL));
+    }
+
+    @Override
+    public void visit(Page page) {
+        if (page.getParseData() instanceof HtmlParseData htmlParseData && !page.getWebURL().toString().contains("paged=")) {
+            String html = htmlParseData.getHtml();
+            String url = String.valueOf(page.getWebURL());
+
+            if (url.startsWith(JOB_DETAIL_URL) && passFilterRequirements(html)) {
+                processCompany(html);
+                processAd(html, url);
+            }
+        }
     }
 
     private boolean shouldAdProcessed(String urlString) {
@@ -57,26 +71,19 @@ public class DevBGCrawler extends WebCrawler {
         return allAds.stream().anyMatch(ja -> urlString.equals(ja.getJobAdUrl()));
     }
 
-    @Override
-    public void visit(Page page) {
-        if (page.getParseData() instanceof HtmlParseData htmlParseData && !page.getWebURL().toString().contains("paged=")) {
-            String html = htmlParseData.getHtml();
-            String url = String.valueOf(page.getWebURL());
-//            create company if it doesn't exist or add platform association if it exists
-            processCompany(html);
-//            process add
-            processAd(html, url);
-
-        }
+    private boolean passFilterRequirements(String html) {
+        return diceExtractor.hasContract(html) && diceExtractor.isRemote(html);
     }
 
     private void processAd(String html, String url) {
-        String companyName = devBGExtractor.extractCompanyName(html);
-        List<String> techStack = devBGExtractor.extractTechStack(html);
-        String postDate = devBGExtractor.extractDatePosted(html);
+        String companyName = diceExtractor.extractCompanyName(html);
+        List<String> techStack = diceExtractor.extractTechStack(html);
+        String postDate = diceExtractor.extractDatePosted(html);
+
         if (companyName == null) {
             return;
         }
+
         Optional<CompanyDto> companyDto = companyService.getCompanyByName(companyName);
         CompanyStatus companyStatus = companyDto.get().getCompanyStatus();
 
@@ -110,11 +117,12 @@ public class DevBGCrawler extends WebCrawler {
     }
 
     private void processCompany(String html) {
-        String companyName = devBGExtractor.extractCompanyName(html);
-        String companyUrl = devBGExtractor.extractCompanyUrl(html);
+        String companyName = diceExtractor.extractCompanyName(html);
+        String companyUrl = diceExtractor.extractCompanyUrl(html);
         if (companyName == null) {
             return;
         }
+
         // if company does not exist -> save it
         if (companyService.getCompanyByName(companyName).isEmpty()) {
             // save company
@@ -131,6 +139,5 @@ public class DevBGCrawler extends WebCrawler {
                 companyService.updateCompanyById(companyDto.get());
             }
         }
-
     }
 }
