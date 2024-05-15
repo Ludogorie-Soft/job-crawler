@@ -1,5 +1,6 @@
 package com.ludogoriesoft.job.crawler.JobCrawler.jobad.controller;
 
+import com.ludogoriesoft.job.crawler.JobCrawler.crawlers.CrawlerService;
 import com.ludogoriesoft.job.crawler.JobCrawler.jobad.persistance.JobAdStatus;
 import com.ludogoriesoft.job.crawler.JobCrawler.jobad.service.JobAdService;
 import lombok.RequiredArgsConstructor;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 public class JobAdController {
 
     private final JobAdService service;
+    private final CrawlerService crawlerService;
 
     @GetMapping("/all")
     public String getAll(Model model) {
@@ -28,4 +30,15 @@ public class JobAdController {
         return "redirect:/job-ad/all";
     }
 
+    @PostMapping("/manualCrawl")
+    public String crawl(@RequestParam("site") String site) {
+        if ("devbg".equals(site)) {
+            crawlerService.crawlDevBg();
+        } else if ("dice".equals(site)) {
+            crawlerService.crawlDice();
+        } else if ("freelancermap".equals(site)) {
+            crawlerService.crawlFreelancerMap();
+        }
+        return "redirect:/job-position/all";
+    }
 }

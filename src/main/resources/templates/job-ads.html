@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
@@ -17,6 +17,15 @@
 <th:block th:include="~{fragments/header}"></th:block>
 <!--END HEADER-->
 <h1>Job Ad List</h1>
+<form action="#" th:action="@{/job-ad/manualCrawl}" method="post">
+    <label for="site">Select a site to manual crawl:</label>
+    <select id="site" name="site">
+        <option value="devbg">dev.bg</option>
+        <option value="dice">dice.com</option>
+        <option value="freelancermap">freelancermap.com</option>
+    </select>
+    <button type="submit">Crawl</button>
+</form>
 <input class="form-control" id="myInput" type="text" placeholder="Search..">
 <table class="table" id="table">
     <thead class="thead-dark">
@@ -66,6 +75,7 @@
             });
         });
     });
+
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -76,5 +86,6 @@
             "lengthMenu": [ 20 ]
         });
     });
+
 </script>
 </html>
