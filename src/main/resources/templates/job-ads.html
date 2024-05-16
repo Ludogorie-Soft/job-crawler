@@ -25,11 +25,13 @@
         <option value="dice">dice.com</option>
         <option value="freelancermap">freelancermap.com</option>
     </select>
-    <button type="submit">Crawl</button>
-</form>
-<input class="form-control" id="myInput" type="text" placeholder="Search..">
 
-<button id="exportBtn">Export to Excel</button>
+    <button type="submit" class="btn btn-secondary">Crawl</button><br><br>
+</form>
+
+<input class="form-control" id="myInput" type="text" placeholder="Search.."><br><br>
+
+<button type="button" id="exportBtn" class="btn btn-secondary">Export to Excel the entries on the page</button>
 <table class="table" id="table">
     <thead class="thead-dark">
     <tr>
@@ -68,9 +70,8 @@
     </tr>
     </tbody>
 </table>
-</body>
 <script>
-$(document).ready(function () {
+    $(document).ready(function () {
     $("#myInput").on("keyup", function () {
         var value = $(this).val().toLowerCase();
         $("#table tr").filter(function () {
@@ -80,19 +81,33 @@ $(document).ready(function () {
 
     // Function to export table data to Excel
     function exportToExcel() {
-        // Select the table element
-        var table = document.getElementById("table");
+        // Select the table body
+        var tbody = $("#table tbody");
 
-        // Remove the last column from the table
-        $("#table tr").each(function () {
+        // Remove the last column from each row
+        tbody.find("tr").each(function () {
             $(this).find("td:last").remove();
         });
 
+        // Filter rows with ACTIVE status
+        tbody.find("tr").filter(function () {
+            return $(this).find("td:eq(6)").text().trim() !== "ACTIVE";
+        }).remove();
+
+        // Clone the table header
+        var tableClone = $("#table").clone();
+
+        // Replace the table body with the filtered tbody
+        tableClone.find("tbody").replaceWith(tbody.clone());
+
         // Convert table to Excel workbook
-        var workbook = XLSX.utils.table_to_book(table);
+        var workbook = XLSX.utils.table_to_book(tableClone[0]);
 
         // Save the workbook as an Excel file
         XLSX.writeFile(workbook, 'job_ads.xlsx');
+
+        // Refresh the page after exporting
+        location.reload();
     }
 
     // Event listener for export button click
@@ -100,7 +115,6 @@ $(document).ready(function () {
         exportToExcel();
     });
 });
-
 </script>
 <script type="text/javascript">
     $(document).ready(function () {
@@ -112,5 +126,5 @@ $(document).ready(function () {
         });
     });
 </script>
-
+</body>
 </html>
