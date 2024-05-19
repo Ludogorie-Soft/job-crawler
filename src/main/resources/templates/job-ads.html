@@ -117,14 +117,17 @@
 });
 </script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        $('#table').DataTable({
-            "dom": "ltp",
-            "ordering": true,
-            "pagingType": "simple",
-            "lengthMenu": [ 10, 20, 50, 100, -1 ] // Options for the number of rows per page, -1 for all rows
-        });
+$(document).ready(function () {
+    $('#table').DataTable({
+        "dom": "ltp",
+        "ordering": true,
+        "pagingType": "simple",
+        "lengthMenu": [
+            [10, 20, 50, 100, -1], // Actual values
+            [10, 20, 50, 100, "All"] // Display values
+        ]
     });
+});
 </script>
 </body>
 </html>
