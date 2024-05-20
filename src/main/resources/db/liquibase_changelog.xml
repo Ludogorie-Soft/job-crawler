@@ -10,4 +10,6 @@
     <include file="changelogs/004_job_filters.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/005_detailed_filters.xml" relativeToChangelogFile="true"/>
     <include file="changelogs/006_job_ads.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/007_users.xml" relativeToChangelogFile="true"/>
+    <include file="changelogs/008_insert_user.xml" relativeToChangelogFile="true"/>
 </databaseChangeLog>
