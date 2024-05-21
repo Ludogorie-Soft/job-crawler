@@ -32,16 +32,22 @@
 <input class="form-control" id="myInput" type="text" placeholder="Search.."><br><br>
 
 <button type="button" id="exportBtn" class="btn btn-secondary">Export to Excel the entries on the page</button>
+<!-- Add a search input field -->
+
 <table class="table" id="table">
     <thead class="thead-dark">
     <tr>
         <th>ID</th>
         <th>Job Position</th>
         <th>Job ad url</th>
-        <th>Source</th>
+        <th>Source
+            <input type="text" id="statusSearchInputSource" placeholder="Search by Source">
+        </th>
         <th>Region</th>
         <th>Post Date</th>
-        <th>Status</th>
+        <th>Status
+            <input type="text" id="statusSearchInput" placeholder="Search by Status">
+        </th>
         <th>Created at</th>
         <th>Updated at</th>
         <th>Change Status</th>
@@ -66,10 +72,72 @@
                 </select>
             </form>
         </td>
-
     </tr>
     </tbody>
 </table>
+
+<script>
+    // Function to filter table by a given column index and input value
+    function filterTable(inputId, columnIndex) {
+        var input = document.getElementById(inputId);
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById("table");
+        var rows = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+            var cell = rows[i].getElementsByTagName("td")[columnIndex];
+
+            if (cell) {
+                var cellText = cell.textContent || cell.innerText;
+
+                if (cellText.toUpperCase().indexOf(filter) > -1) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    // Add event listeners to the input fields
+    document.getElementById("statusSearchInputSource").addEventListener("keyup", function() {
+        filterTable("statusSearchInputSource", 3); // Column index for Source
+    });
+
+    document.getElementById("statusSearchInput").addEventListener("keyup", function() {
+        filterTable("statusSearchInput", 6); // Column index for Status
+    });
+</script>
+<script>
+    function filterTable() {
+        var sourceInput = document.getElementById("statusSearchInputSource").value.toUpperCase();
+        var statusInput = document.getElementById("statusSearchInput").value.toUpperCase();
+
+        var table = document.getElementById("table");
+        var rows = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+            var sourceCell = rows[i].getElementsByTagName("td")[3];
+            var statusCell = rows[i].getElementsByTagName("td")[6];
+
+            if (sourceCell && statusCell) {
+                var sourceText = sourceCell.textContent || sourceCell.innerText;
+                var statusText = statusCell.textContent || statusCell.innerText;
+
+                if ((sourceText.toUpperCase().indexOf(sourceInput) > -1 || sourceInput === "") &&
+                    (statusText.toUpperCase().indexOf(statusInput) > -1 || statusInput === "")) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    // Add event listeners to the input fields
+    document.getElementById("statusSearchInputSource").addEventListener("keyup", filterTable);
+    document.getElementById("statusSearchInput").addEventListener("keyup", filterTable);
+</script>
 <script>
     $(document).ready(function () {
     $("#myInput").on("keyup", function () {

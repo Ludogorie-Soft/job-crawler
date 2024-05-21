@@ -16,6 +16,12 @@
 <th:block th:include="~{fragments/header}"></th:block>
 <!--END HEADER-->
 <h1>Company List</h1>
+<center>
+<a th:href="@{/company/create}">
+    <button class="btn btn-dark">CREATE COMPANY</button>
+</a>
+</center>
+<br>
 <table id="table" class="table">
     <thead class="thead-dark">
     <tr>

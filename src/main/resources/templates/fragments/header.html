@@ -17,17 +17,7 @@
                     </div>
                     <div th:if="${#authorization.expression('isAuthenticated()')}">
                         <li class="nav-item">
-                            <a class="nav-link" href="/company/create">CREATE COMPANY</a>
-                        </li>
-                    </div>
-                    <div th:if="${#authorization.expression('isAuthenticated()')}">
-                        <li class="nav-item">
                             <a class="nav-link" href="/job-position/all">POSITIONS</a>
-                        </li>
-                    </div>
-                    <div th:if="${#authorization.expression('isAuthenticated()')}">
-                        <li class="nav-item">
-                            <a class="nav-link" href="/job-position/create">CREATE JOB POSITION</a>
                         </li>
                     </div>
                     <div th:if="${#authorization.expression('isAuthenticated()')}">
