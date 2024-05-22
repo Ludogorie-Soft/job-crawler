@@ -2,12 +2,10 @@ package com.ludogoriesoft.job.crawler.JobCrawler.jobpositions.controller;
 
 import com.ludogoriesoft.job.crawler.JobCrawler.jobfilter.persistance.JobFilter;
 import com.ludogoriesoft.job.crawler.JobCrawler.jobpositions.model.JobPositionDto;
-import com.ludogoriesoft.job.crawler.JobCrawler.jobpositions.persistance.JobPosition;
 import com.ludogoriesoft.job.crawler.JobCrawler.jobpositions.service.JobPositionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -68,7 +66,6 @@ public class JobPositionController {
         service.updateJobPosition(jobPositionDto);
         return "redirect:/job-position/all";
     }
-
 //    todo: add, change jobFilter
 
 }

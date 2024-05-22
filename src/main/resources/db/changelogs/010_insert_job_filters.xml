@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.3.xsd">
+
+    <changeSet id="3" author="ludogorie-soft">
+        <insert tableName="job_filters">
+            <column name="id" valueNumeric="1" />
+            <column name="job_position_id" valueNumeric="1" />
+            <column name="job_site" value="dev.bg" />
+            <column name="filter_url" value="https://dev.bg/company/jobs/back-end-development/?_job_location=remote&amp;_paged=" />
+        </insert>
+        <insert tableName="job_filters">
+            <column name="id" valueNumeric="2" />
+            <column name="job_position_id" valueNumeric="1" />
+            <column name="job_site" value="dice.com" />
+            <column name="filter_url" value="https://www.dice.com/jobs/q-Java-jobs" />
+        </insert>
+        <insert tableName="job_filters">
+            <column name="id" valueNumeric="3" />
+            <column name="job_position_id" valueNumeric="1" />
+            <column name="job_site" value="freelancermap.com" />
+            <column name="filter_url" value="https://www.freelancermap.com/it-projects.html?excludeDachProjects=true&amp;remoteInPercent%5B0%5D=100&amp;query=java&amp;sort=1&amp;pagenr=1" />
+        </insert>
+    </changeSet>
+
+</databaseChangeLog>

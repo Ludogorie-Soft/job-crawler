@@ -6,7 +6,8 @@ management:
       base-path: '/admin'
       path-mapping:
         prometheus: '/metrics'
-
+server:
+  port: 8081
 spring:
   application.name: job-crawler
   datasource:

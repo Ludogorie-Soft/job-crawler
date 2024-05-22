@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" xmlns:th="">
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.1.3/dist/css/bootstrap.min.css"
@@ -8,6 +8,7 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
     <script src="//cdn.datatables.net/2.0.1/js/dataTables.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.4/xlsx.full.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <title>Job Ads</title>
@@ -17,17 +18,36 @@
 <th:block th:include="~{fragments/header}"></th:block>
 <!--END HEADER-->
 <h1>Job Ad List</h1>
-<input class="form-control" id="myInput" type="text" placeholder="Search..">
+<form action="#" th:action="@{/job-ad/manualCrawl}" method="post">
+    <label for="site">Select a site to manual crawl:</label>
+    <select id="site" name="site">
+        <option value="devbg">dev.bg</option>
+        <option value="dice">dice.com</option>
+        <option value="freelancermap">freelancermap.com</option>
+    </select>
+
+    <button type="submit" class="btn btn-secondary">Crawl</button><br><br>
+</form>
+
+<input class="form-control" id="myInput" type="text" placeholder="Search.."><br><br>
+
+<button type="button" id="exportBtn" class="btn btn-secondary">Export to Excel the entries on the page</button>
+<!-- Add a search input field -->
+
 <table class="table" id="table">
     <thead class="thead-dark">
     <tr>
         <th>ID</th>
         <th>Job Position</th>
         <th>Job ad url</th>
-        <th>Source</th>
+        <th>Source
+            <input type="text" id="statusSearchInputSource" placeholder="Search by Source">
+        </th>
         <th>Region</th>
         <th>Post Date</th>
-        <th>Status</th>
+        <th>Status
+            <input type="text" id="statusSearchInput" placeholder="Search by Status">
+        </th>
         <th>Created at</th>
         <th>Updated at</th>
         <th>Change Status</th>
@@ -52,29 +72,130 @@
                 </select>
             </form>
         </td>
-
     </tr>
     </tbody>
 </table>
-</body>
+
+<script>
+    // Function to filter table by a given column index and input value
+    function filterTable(inputId, columnIndex) {
+        var input = document.getElementById(inputId);
+        var filter = input.value.toUpperCase();
+        var table = document.getElementById("table");
+        var rows = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+            var cell = rows[i].getElementsByTagName("td")[columnIndex];
+
+            if (cell) {
+                var cellText = cell.textContent || cell.innerText;
+
+                if (cellText.toUpperCase().indexOf(filter) > -1) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    // Add event listeners to the input fields
+    document.getElementById("statusSearchInputSource").addEventListener("keyup", function() {
+        filterTable("statusSearchInputSource", 3); // Column index for Source
+    });
+
+    document.getElementById("statusSearchInput").addEventListener("keyup", function() {
+        filterTable("statusSearchInput", 6); // Column index for Status
+    });
+</script>
+<script>
+    function filterTable() {
+        var sourceInput = document.getElementById("statusSearchInputSource").value.toUpperCase();
+        var statusInput = document.getElementById("statusSearchInput").value.toUpperCase();
+
+        var table = document.getElementById("table");
+        var rows = table.getElementsByTagName("tr");
+
+        for (var i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+            var sourceCell = rows[i].getElementsByTagName("td")[3];
+            var statusCell = rows[i].getElementsByTagName("td")[6];
+
+            if (sourceCell && statusCell) {
+                var sourceText = sourceCell.textContent || sourceCell.innerText;
+                var statusText = statusCell.textContent || statusCell.innerText;
+
+                if ((sourceText.toUpperCase().indexOf(sourceInput) > -1 || sourceInput === "") &&
+                    (statusText.toUpperCase().indexOf(statusInput) > -1 || statusInput === "")) {
+                    rows[i].style.display = "";
+                } else {
+                    rows[i].style.display = "none";
+                }
+            }
+        }
+    }
+
+    // Add event listeners to the input fields
+    document.getElementById("statusSearchInputSource").addEventListener("keyup", filterTable);
+    document.getElementById("statusSearchInput").addEventListener("keyup", filterTable);
+</script>
 <script>
     $(document).ready(function () {
-        $("#myInput").on("keyup", function () {
-            var value = $(this).val().toLowerCase();
-            $("#table tr").filter(function () {
-                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
-            });
+    $("#myInput").on("keyup", function () {
+        var value = $(this).val().toLowerCase();
+        $("#table tr").filter(function () {
+            $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
         });
     });
+
+    // Function to export table data to Excel
+    function exportToExcel() {
+        // Select the table body
+        var tbody = $("#table tbody");
+
+        // Remove the last column from each row
+        tbody.find("tr").each(function () {
+            $(this).find("td:last").remove();
+        });
+
+        // Filter rows with ACTIVE status
+        tbody.find("tr").filter(function () {
+            return $(this).find("td:eq(6)").text().trim() !== "ACTIVE";
+        }).remove();
+
+        // Clone the table header
+        var tableClone = $("#table").clone();
+
+        // Replace the table body with the filtered tbody
+        tableClone.find("tbody").replaceWith(tbody.clone());
+
+        // Convert table to Excel workbook
+        var workbook = XLSX.utils.table_to_book(tableClone[0]);
+
+        // Save the workbook as an Excel file
+        XLSX.writeFile(workbook, 'job_ads.xlsx');
+
+        // Refresh the page after exporting
+        location.reload();
+    }
+
+    // Event listener for export button click
+    $("#exportBtn").on("click", function () {
+        exportToExcel();
+    });
+});
 </script>
 <script type="text/javascript">
-    $(document).ready(function () {
-        $('#table').DataTable({
-            "dom": "tp",
-            "ordering": true,
-            "pagingType": "simple",
-            "lengthMenu": [ 20 ]
-        });
+$(document).ready(function () {
+    $('#table').DataTable({
+        "dom": "ltp",
+        "ordering": true,
+        "pagingType": "simple",
+        "lengthMenu": [
+            [10, 20, 50, 100, -1], // Actual values
+            [10, 20, 50, 100, "All"] // Display values
+        ]
     });
+});
 </script>
+</body>
 </html>
